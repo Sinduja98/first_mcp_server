@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-node_modules/
-=======
+mcp-client/node_modules/
 # Python-generated files
 __pycache__/
 *.py[oc]
@@ -11,4 +9,3 @@ wheels/
 
 # Virtual environments
 .venv
->>>>>>> 585baf7f656b5564efe8ef6e4fe1f675762441e8
