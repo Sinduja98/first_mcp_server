@@ -1,1 +1,14 @@
+<<<<<<< HEAD
 node_modules/
+=======
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+>>>>>>> 585baf7f656b5564efe8ef6e4fe1f675762441e8

@@ -1,0 +1,16 @@
+{
+    "servers": {
+        "testing-addition-server": {
+            "type": "stdio",
+            "command": "uv",
+            "args": [
+                "run",
+                "--with",
+                "mcp",
+                "mcp",
+                "run",
+                "/Users/sindujakuna/Desktop/mie/first-mcp-server/main.py"
+            ]
+        }
+    }
+}
