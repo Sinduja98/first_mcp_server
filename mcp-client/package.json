@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && chmod 755 build/index.js"
+    "build": "tsc && chmod 755 build/index.js ",
+    "dev": "tsc && node build/index.js /Users/sindujakuna/Desktop/mie/first_mcp_server/first_mcp_server/mcp-server/main.py"
   },
   "keywords": [],
   "author": "",
@@ -14,7 +15,8 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.54.0",
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "dotenv": "^16.5.0"
+    "dotenv": "^16.5.0",
+    "openai": "^5.5.0"
   },
   "devDependencies": {
     "@types/node": "^24.0.1",
