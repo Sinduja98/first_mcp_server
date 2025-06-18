@@ -12,8 +12,6 @@ if (!OPENAI_API_KEY) {
   throw new Error("OPENAI_API_KEY is not set");
 }
 
-console.log("hello world");
-
 interface MCPTool {
   name: string;
   description: string;
@@ -123,6 +121,7 @@ class MCPClient {
             const result = await this.mcp.callTool({
               name: toolName,
               arguments: toolArgs,
+              timeout: 120000 
             });
             
             finalText.push(
@@ -184,7 +183,6 @@ class MCPClient {
       console.log("Type your queries or 'quit' to exit.");
 
       while (true) {
-        console.log("\nTEST");
         const message = await rl.question("\nQuery: ");
         console.log("You: " + message);
         if (message.toLowerCase() === "quit") {

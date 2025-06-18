@@ -1,8 +1,63 @@
 # server.py
 from mcp.server.fastmcp import FastMCP
+import httpx
 
 # Create an MCP server
 mcp = FastMCP("Demo")
+
+NWS_API_BASE = "https://api.weather.gov"
+USER_AGENT = "weather-app/1.0"
+
+
+async def make_nws_request(url: str) -> dict[str, any] | None:
+    """Make a request to the NWS API with proper error handling."""
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Accept": "application/geo+json"
+    }
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(url, headers=headers, timeout=30.0)
+            response.raise_for_status()
+            return response.json()
+        except Exception:
+            return None
+
+def format_alert(feature: dict) -> str:
+    """Format an alert feature into a readable string."""
+    props = feature["properties"]
+    return f"""
+Event: {props.get('event', 'Unknown')}
+Area: {props.get('areaDesc', 'Unknown')}
+Severity: {props.get('severity', 'Unknown')}
+Description: {props.get('description', 'No description available')}
+Instructions: {props.get('instruction', 'No specific instructions provided')}
+"""
+
+@mcp.tool()
+async def get_weather_alerts(state:str)->str:
+    """Get weather alerts for a US state.
+
+    Args:
+        state: Two-letter US state code (e.g. CA, NY)
+    """
+    print(state)
+    url=f"{NWS_API_BASE}/alerts/active/area/{state}"
+    data= await make_nws_request(url)
+
+    print("data",data)
+
+    if not data or "features" not in data:
+        return "No alerts found or unable to fetch alerts"
+
+    if not data["features"]:
+        return "No active alerts found for the state"
+
+    alerts=[format_alert(word) for word in data["features"][:5]]
+    return "\n--\n".join(alerts)
+
+
+
 
 
 # Add an addition tool
