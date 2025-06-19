@@ -121,7 +121,7 @@ class MCPClient {
             const result = await this.mcp.callTool({
               name: toolName,
               arguments: toolArgs,
-              timeout: 120000 
+              timeout: 120000
             });
             
             finalText.push(

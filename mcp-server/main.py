@@ -9,10 +9,10 @@ NWS_API_BASE = "https://api.weather.gov"
 USER_AGENT = "weather-app/1.0"
 
 
-async def make_nws_request(url: str) -> dict[str, any] | None:
+async def make_nws_request(url):
     """Make a request to the NWS API with proper error handling."""
     headers = {
-        "User-Agent": USER_AGENT,
+        "User-agent": USER_AGENT,
         "Accept": "application/geo+json"
     }
     async with httpx.AsyncClient() as client:
@@ -20,7 +20,7 @@ async def make_nws_request(url: str) -> dict[str, any] | None:
             response = await client.get(url, headers=headers, timeout=30.0)
             response.raise_for_status()
             return response.json()
-        except Exception:
+        except Exception as e:
             return None
 
 def format_alert(feature: dict) -> str:
@@ -39,13 +39,10 @@ async def get_weather_alerts(state:str)->str:
     """Get weather alerts for a US state.
 
     Args:
-        state: Two-letter US state code (e.g. CA, NY)
+        state: Two-letter US state code (e.g. CA, NY, IN)
     """
-    print(state)
     url=f"{NWS_API_BASE}/alerts/active/area/{state}"
     data= await make_nws_request(url)
-
-    print("data",data)
 
     if not data or "features" not in data:
         return "No alerts found or unable to fetch alerts"
@@ -53,10 +50,8 @@ async def get_weather_alerts(state:str)->str:
     if not data["features"]:
         return "No active alerts found for the state"
 
-    alerts=[format_alert(word) for word in data["features"][:5]]
-    return "\n--\n".join(alerts)
-
-
+    alerts=[format_alert(word) for word in data["features"]]
+    return "\n---\n".join(alerts)
 
 
 
