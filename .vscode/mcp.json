@@ -9,8 +9,9 @@
                 "mcp",
                 "mcp",
                 "run",
-                "/Users/sindujakuna/Desktop/mie/first-mcp-server/main.py"
+                "/Users/sindujakuna/Desktop/mie/first_mcp_server/first_mcp_server/mcp-server/main.py"
             ]
         }
+    
     }
 }

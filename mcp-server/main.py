@@ -3,7 +3,10 @@ from mcp.server.fastmcp import FastMCP
 import httpx
 
 # Create an MCP server
-mcp = FastMCP("Demo")
+mcp = FastMCP(name="Demo",
+              host="0.0.0.0",
+              port=8050,
+              )
 
 NWS_API_BASE = "https://api.weather.gov"
 USER_AGENT = "weather-app/1.0"
@@ -112,4 +115,4 @@ def get_greeting(name: str) -> str:
     return f"Hello, {name}!"
 
 if __name__ == "__main__":
-    mcp.run()
+    mcp.run(transport="stdio")
