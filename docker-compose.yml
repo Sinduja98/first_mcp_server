@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  redmine-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: redmine
+      MYSQL_USER: redmine
+      MYSQL_PASSWORD: redmine
+    volumes:
+      - redmine-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+  redmine:
+    image: redmine:latest
+    ports:
+      - "3000:3000"
+    environment:
+      REDMINE_DB_MYSQL: redmine-db
+      REDMINE_DB_DATABASE: redmine
+      REDMINE_DB_USERNAME: redmine
+      REDMINE_DB_PASSWORD: redmine
+    volumes:
+      - redmine-files:/usr/src/redmine/files
+    depends_on:
+      - redmine-db
+    restart: unless-stopped
+
+  mcp-server:
+    image: mcp-server-stdio
+    stdin_open: true
+    tty: true
+    depends_on:
+      - redmine
+    # Add any environment variables your MCP server needs
+    # environment:
+    #   REDMINE_URL: http://redmine:3000
+
+volumes:
+  redmine-db-data:
+  redmine-files:
