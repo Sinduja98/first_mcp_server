@@ -23,6 +23,7 @@ services:
       REDMINE_DB_PASSWORD: redmine
     volumes:
       - redmine-files:/usr/src/redmine/files
+      - ./redmine-plugins:/usr/src/redmine/plugins 
     depends_on:
       - redmine-db
     restart: unless-stopped
