@@ -6,3 +6,4 @@ Redmine::Plugin.register :my_first_plugin do
   url 'https://github.com/Sinduja98/first_mcp_server'
   author_url 'https://github.com/Sinduja98'
 end
+
