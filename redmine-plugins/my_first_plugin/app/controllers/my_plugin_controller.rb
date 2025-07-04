@@ -1,5 +1,6 @@
 class MyPluginController < ApplicationController
   def index
-    render plain: "Hello from My First Redmine Plugin!"
+    @message = "Hello from My First Redmine Plugin!"
+    @current_time = Time.now
   end
 end
