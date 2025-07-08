@@ -1,3 +1,75 @@
-<h2>My First Plugin</h2>
-<p><%= @message %></p>
-<p>Current time: <%= @current_time.strftime("%Y-%m-%d %H:%M:%S") %></p>
+
+<div class="box">
+  <h3>My First Plugin with Ozwell Integration</h3>
+  <p><%= @message %></p>
+  <p>Current time: <%= @current_time.strftime("%Y-%m-%d %H:%M:%S") %></p>
+  
+  <% if User.current.logged? %>
+    <p>Welcome, <%= User.current.name %>!</p>
+  <% end %>
+</div>
+
+<div class="box">
+  <h3>Ozwell Integration</h3>
+  
+  <% if User.current.logged? %>
+    <% if @ozwell_login_url %>
+      <div id="ozwell-container">
+        <iframe
+          id="ozwell-iframe"
+          src="<%= @ozwell_login_url %>"
+          width="100%"
+          height="600"
+          allow="clipboard-write; microphone; camera"
+          style="border: 1px solid #ddd; border-radius: 4px;"
+        ></iframe>
+      </div>
+    <% else %>
+      <div class="flash error">
+        Ozwell login URL not configured. Please set the login URL in the controller.
+      </div>
+    <% end %>
+  <% else %>
+    <div class="flash error">
+      Please <%= link_to 'log in', signin_path %> to use Ozwell integration.
+    </div>
+  <% end %>
+</div>
+
+<style>
+#ozwell-iframe {
+  transition: opacity 0.3s ease;
+}
+
+#ozwell-iframe.loading {
+  opacity: 0.5;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const iframe = document.getElementById('ozwell-iframe');
+  
+  if (iframe) {
+    // Add loading state
+    iframe.classList.add('loading');
+    
+    // Remove loading state when iframe loads
+    iframe.addEventListener('load', function() {
+      iframe.classList.remove('loading');
+    });
+    
+    // Handle iframe errors
+    iframe.addEventListener('error', function() {
+      console.error('Failed to load Ozwell iframe');
+      iframe.style.display = 'none';
+      
+      // Show error message
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'flash error';
+      errorDiv.textContent = 'Failed to load Ozwell. Please check the login URL.';
+      iframe.parentNode.appendChild(errorDiv);
+    });
+  }
+});
+</script>
