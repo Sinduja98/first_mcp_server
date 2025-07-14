@@ -1,3 +1,5 @@
+
+
 Redmine::Plugin.register :my_first_plugin do
   name 'My first redmine Plugin'
   author 'Kuna'

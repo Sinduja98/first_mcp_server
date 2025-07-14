@@ -21,12 +21,17 @@ services:
       REDMINE_DB_DATABASE: redmine
       REDMINE_DB_USERNAME: redmine
       REDMINE_DB_PASSWORD: redmine
+      OZWELL_API_KEY: ${OZWELL_API_KEY}
+      OZWELL_WORKSPACE_ID: ${OZWELL_WORKSPACE_ID}
+      OZWELL_USER_ID: ${OZWELL_USER_ID}
     volumes:
       - redmine-files:/usr/src/redmine/files
       - ./redmine-plugins:/usr/src/redmine/plugins 
     depends_on:
       - redmine-db
     restart: unless-stopped
+     
+
 
   mcp-server:
     image: mcp-server-stdio
