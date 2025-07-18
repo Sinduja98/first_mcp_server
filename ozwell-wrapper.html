@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Redmine + Ozwell</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      display: flex;
+      height: 100%;
+    }
+    .left, .right {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      border-right: 1px solid #ddd;
+    }
+    .right {
+      border-right: none;
+    }
+    .left iframe, .right iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .error-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      color: #6c757d;
+      max-width: 350px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .error-message h3 {
+      margin-top: 0;
+      color: #dc3545;
+      font-size: 18px;
+    }
+    .error-message p {
+      margin: 10px 0;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .error-message ul {
+      text-align: left;
+      font-size: 13px;
+      margin: 15px 0;
+    }
+    .fallback-link {
+      display: inline-block;
+      margin: 10px 5px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    .fallback-link:hover {
+      background: #0056b3;
+    }
+    .fallback-link.secondary {
+      background: #6c757d;
+    }
+    .fallback-link.secondary:hover {
+      background: #545b62;
+    }
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #6c757d;
+      font-size: 14px;
+    }
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .header {
+      background: #f8f9fa;
+      padding: 10px;
+      border-bottom: 1px solid #dee2e6;
+      font-weight: bold;
+      font-size: 14px;
+      color: #495057;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Redmine issue page -->
+    <div class="left">
+      <div class="header">Redmine Issues</div>
+      <div class="loading" id="redmine-loading">
+        <div class="spinner"></div>
+        Loading Redmine...
+      </div>
+      <iframe 
+        src="http://localhost:3000/issues/1" 
+        id="redmine-frame"
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+        loading="lazy"
+        style="display: block;">
+      </iframe>
+      <div class="error-message" id="redmine-error" style="display: none;">
+        <h3>⚠️ Redmine Access Blocked</h3>
+        <p>The Redmine page cannot be embedded due to security restrictions.</p>
+        <p><strong>Common causes:</strong></p>
+        <ul>
+          <li>X-Frame-Options header blocking embedding</li>
+          <li>HTTPS/SSL certificate issues</li>
+          <li>CORS restrictions</li>
+          <li>Redmine server not running</li>
+        </ul>
+        <div>
+          <a href="http://localhost:3000/issues/1" target="_blank" class="fallback-link">
+            Open Redmine in New Tab
+          </a>
+          <a href="#" onclick="retryRedmine()" class="fallback-link secondary">
+            Retry Loading
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ozwell -->
+    <div class="right">
+      <div class="header">Ozwell AI Assistant</div>
+      <div class="loading" id="ozwell-loading">
+        <div class="spinner"></div>
+        Loading Ozwell...
+      </div>
+      <iframe 
+        src="https://ai.bluehive.com/session/N3hQCQCjGpwHFZ2MT?token=SFKwxEMX-gwJe05q8CoH6ATIBoXJApPRUPDhoKjiWxY&embedType=iframe-basic"
+        id="ozwell-frame"
+        loading="lazy"
+        style="display: block;">
+      </iframe>
+      <!-- <div class="error-message" id="ozwell-error" style="display: none;">
+        <h3>⚠️ Ozwell Access Blocked</h3>
+        <p>The Ozwell AI interface cannot be embedded due to security restrictions.</p>
+        <p><strong>This usually happens when:</strong></p>
+        <ul>
+          <li>The external site blocks iframe embedding</li>
+          <li>Authentication tokens have expired</li>
+          <li>Network connectivity issues</li>
+        </ul>
+        <div>
+          <a href="https://ai.bluehive.com/session/B8poeu6PFpHX4vNBg?token=YR_D30bJcvdBsAprxTFjbq5lBpER0rfGUmBnUSRCnU7&embedType=iframe-basic" target="_blank" class="fallback-link">
+            Open Ozwell in New Tab
+          </a>
+          <a href="#" onclick="retryOzwell()" class="fallback-link secondary">
+            Retry Loading
+          </a>
+        </div> -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Enhanced iframe loading check
+    function checkIframeLoad(iframe, errorDiv, loadingDiv) {
+      let hasLoaded = false;
+      const iframeName = iframe.id;
+      
+      console.log(`Starting to load ${iframeName}:`, iframe.src);
+      
+      iframe.addEventListener('load', function() {
+        hasLoaded = true;
+        loadingDiv.style.display = 'none';
+        console.log(`${iframeName} load event fired`);
+        
+        // Check if iframe is actually accessible
+        setTimeout(() => {
+          try {
+            // Try to access iframe content
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            if (iframeDoc) {
+              // Successfully loaded
+              iframe.style.display = 'block';
+              console.log(`${iframeName} loaded successfully`);
+            }
+          } catch (e) {
+            // Access denied - likely X-Frame-Options
+            console.log(`${iframeName} loaded but access denied (X-Frame-Options):`, e.message);
+            showError(iframe, errorDiv);
+          }
+        }, 100);
+      });
+
+      iframe.addEventListener('error', function() {
+        console.log(`${iframeName} failed to load`);
+        loadingDiv.style.display = 'none';
+        showError(iframe, errorDiv);
+      });
+
+      // Timeout fallback
+      setTimeout(() => {
+        if (!hasLoaded) {
+          console.log(`${iframeName} timeout - likely blocked or server down`);
+          loadingDiv.style.display = 'none';
+          showError(iframe, errorDiv);
+        }
+      }, 8000);
+    }
+
+    function showError(iframe, errorDiv) {
+      errorDiv.style.display = 'block';
+      iframe.style.display = 'none';
+    }
+
+    function retryRedmine() {
+      const iframe = document.getElementById('redmine-frame');
+      const error = document.getElementById('redmine-error');
+      const loading = document.getElementById('redmine-loading');
+      
+      error.style.display = 'none';
+      loading.style.display = 'block';
+      iframe.src = iframe.src; // Reload iframe
+    }
+
+    function retryOzwell() {
+      const iframe = document.getElementById('ozwell-frame');
+      const error = document.getElementById('ozwell-error');
+      const loading = document.getElementById('ozwell-loading');
+      
+      error.style.display = 'none';
+      loading.style.display = 'block';
+      iframe.src = iframe.src; // Reload iframe
+    }
+
+    // Initialize iframe checks
+    const redmineFrame = document.getElementById('redmine-frame');
+    const redmineError = document.getElementById('redmine-error');
+    const redmineLoading = document.getElementById('redmine-loading');
+    const ozwellFrame = document.getElementById('ozwell-frame');
+    const ozwellError = document.getElementById('ozwell-error');
+    const ozwellLoading = document.getElementById('ozwell-loading');
+
+    checkIframeLoad(redmineFrame, redmineError, redmineLoading);
+    checkIframeLoad(ozwellFrame, ozwellError, ozwellLoading);
+  </script>
+</body>
+</html>

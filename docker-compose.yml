@@ -11,6 +11,12 @@ services:
     volumes:
       - redmine-db-data:/var/lib/mysql
     restart: unless-stopped
+  
+  ozwell-service:
+    build: ./ozwell-service
+    ports:
+      - "5001:5000"
+    restart: unless-stopped
 
   redmine:
     image: redmine:latest
@@ -27,11 +33,12 @@ services:
     volumes:
       - redmine-files:/usr/src/redmine/files
       - ./redmine-plugins:/usr/src/redmine/plugins 
+      - /Users/sindujakuna/mcp-servers/first_mcp_server/first_mcp_server/ozwell-wrapper.html:/usr/src/redmine/public/ozwell-wrapper.html
     depends_on:
       - redmine-db
+      - ozwell-service
     restart: unless-stopped
-     
-
+  
 
   mcp-server:
     image: mcp-server-stdio
