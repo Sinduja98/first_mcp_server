@@ -1,9 +1,22 @@
 const express = require('express');
 const axios = require('axios');
+const dotenv = require('dotenv');
 const app = express();
+const path = require('path');
+dotenv.config();
+
 app.use(express.json());
 
-app.post('/ozwell/session', async (req, res) => {
+// Serve config from .env
+app.get('/config', (req, res) => {
+  res.json({
+    apiKey: process.env.OZWELL_API_KEY,
+    workspaceId: process.env.OZWELL_WORKSPACE_ID,
+    userId: process.env.OZWELL_USER_ID
+  });
+});
+
+app.post('/session', async (req, res) => {
   const { apiKey, workspaceId, userId } = req.body;
 
   try {

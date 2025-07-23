@@ -16,7 +16,20 @@ services:
     build: ./ozwell-service
     ports:
       - "5001:5000"
+    volumes:
+      - ./.env:/app/.env
     restart: unless-stopped
+  
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - redmine
+      - ozwell-service
+
 
   redmine:
     image: redmine:latest
